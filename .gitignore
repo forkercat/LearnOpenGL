@@ -1,0 +1,16 @@
+# clion
+cmake-build-debug/
+CMakeFiles/
+.idea/
+CMakeCache.txt
+Makefile
+
+
+OnlineStudy/
+
+# cpp
+*.cbp
+
+# mac
+.DS_Store
+
