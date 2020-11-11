@@ -136,6 +136,7 @@ set(
 set(
     4_advanced_opengl
     1_1_depth_testing
+    2_stencil_testing
 )
 
 # Other targets
