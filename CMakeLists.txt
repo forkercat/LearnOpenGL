@@ -137,6 +137,8 @@ set(
     4_advanced_opengl
     1_1_depth_testing
     2_stencil_testing
+    3_1_blending_discard
+    3_2_blending_sort
 )
 
 # Other targets
