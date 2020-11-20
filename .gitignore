@@ -14,3 +14,5 @@ OnlineStudy/
 # mac
 .DS_Store
 
+# resources
+resources/objects/horizon/

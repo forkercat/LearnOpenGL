@@ -24,8 +24,8 @@ void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 800;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -38,7 +38,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(0.0f, 0.0f, 5.0f);
 
 int main()
 {
@@ -56,7 +56,7 @@ int main()
 
     // glfw: window creation
     // ---------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Model Loading", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -89,8 +89,9 @@ int main()
 
     // load models
     // -----------
-    Model ourModel(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
+    // Model ourModel(FileSystem::getPath("resources/objects/nanosuit/nanosuit.obj"));
     // Model ourModel(FileSystem::getPath("resources/objects/backpack/backpack.obj"));
+    Model ourModel(FileSystem::getPath("resources/objects/horizon/Horizon.obj"));
 
     // render loop
     // -----------
@@ -109,7 +110,7 @@ int main()
 
         // render
         // ------
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         ourShader.use();
@@ -118,8 +119,8 @@ int main()
         ourShader.setVec3("viewPos", camera.Position);
         ourShader.setFloat("material.shininess", 100.0f);
         ourShader.setVec3("light.position", lightPos);
-        ourShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-        ourShader.setVec3("light.diffuse", 0.7f, 0.7f, 0.7f);
+        ourShader.setVec3("light.ambient", 0.3f, 0.3f, 0.3f);
+        ourShader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
         ourShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         // view/projection transformations
@@ -130,8 +131,9 @@ int main()
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -5.0f, -5.0f));
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 

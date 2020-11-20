@@ -21,48 +21,27 @@ public:
     // -------------------------------------------
     Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
     {
+        std::cout << "Initializing Shader with paths: " << std::endl;
+        std::cout << "  ---> " << vertexPath << std::endl;
+        std::cout << "  ---> " << fragmentPath << std::endl;
+        if (geometryPath != nullptr)
+        {
+            std::cout << "  ---> " << geometryPath << std::endl;
+
+        }
+
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
         std::string fragmentCode;
         std::string geometryCode;
-        std::ifstream vShaderFile;
-        std::ifstream fShaderFile;
-        std::ifstream gShaderFile;
-        // ensure ifstream objects can throw exceptions
-        vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        try
-        {
-            // open files
-            vShaderFile.open(vertexPath);
-            fShaderFile.open(fragmentPath);
-            std::stringstream vShaderStream, fShaderStream;
-            // read file's buffer contents into streams
-            vShaderStream << vShaderFile.rdbuf();
-            fShaderStream << fShaderFile.rdbuf();
-            // close file handlers
-            vShaderFile.close();
-            fShaderFile.close();
-            // convert stream into string
-            vertexCode = vShaderStream.str();
-            fragmentCode = fShaderStream.str();
 
-            // if geometry shader path is present
-            if (geometryPath != nullptr)
-            {
-                gShaderFile.open(geometryPath);
-                std::stringstream gShaderStream;
-                gShaderStream << gShaderFile.rdbuf();
-                gShaderFile.close();
-                geometryCode = gShaderStream.str();
-            }
-        }
-        catch (std::ifstream::failure& e)
+        vertexCode = getSourceCodeFromPath(vertexPath, "VERTEX");
+        fragmentCode = getSourceCodeFromPath(fragmentPath, "FRAGMENT");
+        if (geometryPath != nullptr)
         {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
-            std::cout << e.code() << " | " << e.what() << std::endl;
+            geometryCode = getSourceCodeFromPath(geometryPath, "GEOMETRY");
         }
+
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
 
@@ -88,6 +67,7 @@ public:
             const char* gShaderCode = geometryCode.c_str();
             geometry = glCreateShader(GL_GEOMETRY_SHADER);
             glShaderSource(geometry, 1, &gShaderCode, nullptr);
+            glCompileShader(geometry);
             checkCompileErrors(geometry, "GEOMETRY");
         }
 
@@ -179,6 +159,33 @@ public:
     }
 
 private:
+    // read source code from source file
+    std::string getSourceCodeFromPath(const char* shaderPath, std::string type)
+    {
+        std::string shaderCode;
+        std::ifstream shaderFile;
+        // ensure ifstream objects can throw exceptions
+        shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        try
+        {
+            // open files
+            shaderFile.open(shaderPath);
+            std::stringstream shaderStream;
+            // read file's buffer contents into streams
+            shaderStream << shaderFile.rdbuf();
+            // close file handlers
+            shaderFile.close();
+            // convert stream into string
+            shaderCode = shaderStream.str();
+        }
+        catch (std::ifstream::failure& e)
+        {
+            std::cout << "ERROR::SHADER::" << type << "::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+            std::cout << e.code() << " | " << e.what() << std::endl;
+        }
+        return shaderCode;
+    }
+
     // utility function for checking errors
     // ------------------------------------
     void checkCompileErrors(unsigned int shader, std::string type)

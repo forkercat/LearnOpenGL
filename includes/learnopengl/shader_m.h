@@ -29,27 +29,39 @@ public:
         // ensure ifstream objects can throw exceptions
         vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        // vertex
         try
         {
             // open files
             vShaderFile.open(vertexPath);
-            fShaderFile.open(fragmentPath);
-            std::stringstream vShaderStream, fShaderStream;
+            std::stringstream vShaderStream;
             // read file's buffer contents into streams
             vShaderStream << vShaderFile.rdbuf();
-            fShaderStream << fShaderFile.rdbuf();
             // close file handlers
             vShaderFile.close();
-            fShaderFile.close();
             // convert stream into string
             vertexCode = vShaderStream.str();
+        }
+        catch (std::ifstream::failure& e)
+        {
+            std::cout << "ERROR::SHADER::VERTEX::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+            std::cout << e.code() << " | " << e.what() << std::endl;
+        }
+        // fragment
+        try
+        {
+            fShaderFile.open(fragmentPath);
+            std::stringstream fShaderStream;
+            fShaderStream << fShaderFile.rdbuf();
+            fShaderFile.close();
             fragmentCode = fShaderStream.str();
         }
         catch (std::ifstream::failure& e)
         {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+            std::cout << "ERROR::SHADER::FRAGMENT::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
             std::cout << e.code() << " | " << e.what() << std::endl;
         }
+
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
 

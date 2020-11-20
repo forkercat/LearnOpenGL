@@ -94,6 +94,7 @@ set(
     2_lighting
     3_model_loading
     4_advanced_opengl
+    5_advanced_lighting
 )
 
 set(
@@ -139,6 +140,20 @@ set(
     2_stencil_testing
     3_1_blending_discard
     3_2_blending_sort
+    5_1_framebuffers
+    6_1_cubemaps_skybox
+    9_1_geometry_shader
+    10_1_instancing_quads
+    10_1_instancing_quads_via_buffer
+    10_2_asteroids
+    10_2_asteroids_via_buffer
+)
+
+set(
+    5_advanced_lighting
+    1_advanced_lighting
+    3_1_1_shadow_mapping_depth
+    3_1_2_shadow_mapping_base
 )
 
 # Other targets
