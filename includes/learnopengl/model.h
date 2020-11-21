@@ -14,7 +14,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <learnopengl/mesh.h>
+#include <learnopengl/mesh_bk.h>
 #include <learnopengl/shader.h>
 
 #include <string>
@@ -119,8 +119,8 @@ private:
             }
 
             // texture coords
-            // if (mesh->HasTextureCoords())
             if (mesh->mTextureCoords[0])
+            // if (true)
             {
                 // a vertex can contain up to 8 different texture coordinates.
                 // We thus make the assumption that we won't use models where
@@ -170,11 +170,11 @@ private:
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
         // 3. normal maps
-        std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal");
+        std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
         textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
         // 4. height maps
-        std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");
+        std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
         return Mesh(vertices, indices, textures);
