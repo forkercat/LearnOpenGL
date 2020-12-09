@@ -87,7 +87,7 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader shader("4_normal_mapping.vert", "4_normal_mapping.frag");
+    Shader shader("5_1_parallax_mapping.vert", "5_1_parallax_mapping.frag");
 
     // load textures
     // -------------
@@ -146,7 +146,9 @@ int main()
         shader.setVec3("viewPos", camera.Position);
         shader.setVec3("lightPos", lightPos);
         shader.setFloat("heightScale", heightScale);  // adjust with Q and E keys
-        // std::cout << heightScale << std::endl;
+        shader.setInt("parallax", parallax);
+        std::cout << "Height Scale: " << heightScale << std::endl;
+        std::cout << "Parallax Mapping: " << (parallax ? "On" : "Off") << std::endl;
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
         glActiveTexture(GL_TEXTURE1);
@@ -290,6 +292,33 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         camera.ProcessKeyboard(DOWN, deltaTime);
+
+    // toggle on/off of parallax mapping
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS && !parallaxPressed)
+    {
+        parallax = !parallax;
+        parallaxPressed = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE)
+    {
+        parallaxPressed = false;
+    }
+
+    // adjust height scale
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+        if (heightScale > 0.0f)
+            heightScale -= 0.0005f;
+        else
+            heightScale = 0.0f;
+    }
+    else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    {
+        if (heightScale < 1.0f)
+            heightScale += 0.0005f;
+        else
+            heightScale = 1.0f;
+    }
 }
 
 // glfw: whenever the window size changed (bu OS or user resize) this callback function executes

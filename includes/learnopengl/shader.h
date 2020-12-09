@@ -27,7 +27,6 @@ public:
         if (geometryPath != nullptr)
         {
             std::cout << "  ---> " << geometryPath << std::endl;
-
         }
 
         // 1. retrieve the vertex/fragment source code from filePath

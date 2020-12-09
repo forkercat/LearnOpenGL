@@ -14,7 +14,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <learnopengl/mesh_bk.h>
+#include <learnopengl/mesh.h>
 #include <learnopengl/shader.h>
 
 #include <string>
@@ -232,7 +232,6 @@ unsigned int TextureFromFile(const char* path, const std::string& directory, boo
             format = GL_RGB;
         else if (nrComponents == 4)
             format = GL_RGBA;
-
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);

@@ -8,8 +8,8 @@ set(CMAKE_MODULE_PATH
 
 # Configuration
 configure_file(
-    configuration/root_direcotry.h.in
-    configuration/root_direcotry.h  # this file will be generated
+    configuration/root_directory.h.in
+    configuration/root_directory.h  # this file will be generated
 )
 
 # Macro
@@ -32,16 +32,28 @@ message(STATUS "Found GLFW3 in: ${GLFW3_INCLUDE_DIRS}")
 find_package(ASSIMP REQUIRED)
 message(STATUS "Found Assimp in: ${ASSIMP_INCLUDE_DIRS}")
 
+find_package(IRRKLANG REQUIRED)
+message(STATUS "Found IrrKlang in: ${IRRKLANG_INCLUDE_DIRS}")
+message(STATUS "Found IrrKlang Lib in: ${IRRKLANG_LIBRARY}")
+
+find_package(FREETYPE REQUIRED)
+message(STATUS "Found FreeType in: ${FREETYPE_INCLUDE_DIRS}")
+message(STATUS "Found FreeType Lib in: ${FREETYPE_LIBRARY}")
+
 
 # Static Libraries
 ##################
 # Creates relevant static libraries (PUBLIC - no need to include the headers in other targets)
-add_library(stb_image_library STATIC src/stb_image.cpp)
-add_library(glad_library STATIC src/glad.c)
-target_include_directories(stb_image_library
+add_library(stb_image STATIC src/stb_image.cpp)
+add_library(glad STATIC src/glad.c)
+add_library(filesystem STATIC src/filesystem.cpp)
+
+target_include_directories(stb_image
     PRIVATE ${CMAKE_SOURCE_DIR}/includes)
-target_include_directories(glad_library
+target_include_directories(glad
     PRIVATE ${CMAKE_SOURCE_DIR}/includes)
+target_include_directories(filesystem
+    PRIVATE ${CMAKE_SOURCE_DIR}/includes ${CMAKE_BINARY_DIR}/configuration)
 
 # Set include directories
 #########################
@@ -50,6 +62,8 @@ set(INCLUDE_DIRS
     ${GLM_INCLUDE_DIRS}
     ${GLFW3_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIRS}
+    ${IRRKLANG_INCLUDE_DIRS}
+    ${FREETYPE_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR}/configuration
     ${CMAKE_SOURCE_DIR}/includes)
 
@@ -60,8 +74,11 @@ set(LIBS
     ${LIBS}
     ${GLFW3_LIBRARY}
     ${ASSIMP_LIBRARY}
-    stb_image_library # target name
-    glad_library)
+    ${IRRKLANG_LIBRARY}
+    ${FREETYPE_LIBRARY}
+    stb_image # target name
+    glad
+    filesystem)
 
 if (APPLE)
     include_directories(/System/Library/Frameworks)
@@ -95,6 +112,7 @@ set(
     3_model_loading
     4_advanced_opengl
     5_advanced_lighting
+    6_practice
 )
 
 set(
@@ -132,6 +150,7 @@ set(
 set(
     3_model_loading
     1_model_loading
+    1_model_loading_original
 )
 
 set(
@@ -154,6 +173,19 @@ set(
     1_advanced_lighting
     3_1_1_shadow_mapping_depth
     3_1_2_shadow_mapping_base
+    4_normal_mapping
+    5_1_parallax_mapping
+    5_2_steep_parallax_mapping
+    5_3_parallax_occlusion_mapping
+    6_hdr
+    7_bloom
+    8_1_deferred_shading
+    9_ssao
+)
+
+set(
+    6_practice
+    breakout
 )
 
 # Other targets
@@ -198,5 +230,37 @@ foreach (CHAPTER ${CHAPTERS})
                     ${TARGET_NAME})
             endif ()
         endforeach ()
+
+        # copy breakout shaders
+        file(
+            GLOB BREAKOUT_SHADERS
+            src/${CHAPTER}/${DEMO}/shaders/*
+        )
+        file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/cmake-build-debug/shaders)
+        foreach (SHADER ${BREAKOUT_SHADERS})
+            if (APPLE)
+                # create symbolic link for those files
+                get_filename_component(SHADER_NAME ${SHADER} NAME)
+                makeLink(${SHADER}
+                    ${CMAKE_SOURCE_DIR}/cmake-build-debug/shaders/${SHADER_NAME}
+                    ${TARGET_NAME})
+            endif ()
+        endforeach ()
+
+        # copy IrrKlang plugin files
+        file(
+            GLOB PLUGIN_FILES
+            dlls/*
+        )
+        foreach (PLUGIN_PATH ${PLUGIN_FILES})
+            if (APPLE)
+                # create symbolic link for those files
+                get_filename_component(PLUGIN_FILE_NAME ${PLUGIN_PATH} NAME)
+                makeLink(${PLUGIN_PATH}
+                    ${CMAKE_SOURCE_DIR}/cmake-build-debug/${PLUGIN_FILE_NAME}
+                    ${TARGET_NAME})
+            endif ()
+        endforeach ()
+
     endforeach ()
 endforeach ()

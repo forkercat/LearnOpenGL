@@ -14,21 +14,28 @@ uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
 uniform sampler2D depthMap;
 
-uniform float height_scale;
+uniform float heightScale;
+uniform bool parallax;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir);
 
 void main()
 {
     vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-    vec2 newTexCoords = ParallaxMapping(fs_in.TexCoords, viewDir);
+    vec2 texCoords = parallax ? ParallaxMapping(fs_in.TexCoords, viewDir) : fs_in.TexCoords;
+
+    // discrad the fragment whenever it samples outside
+    if (texCoords.x > 1.0f || texCoords.y > 1.0f || texCoords.x < 0.0f || texCoords.y < 0.0f)
+    {
+        discard;
+    }
 
     // obtain normal from normal map in range [0, 1]
-    vec3 normal = texture(normalMap, newTexCoords).rgb;
+    vec3 normal = texture(normalMap, texCoords).rgb;
     normal = normalize(normal * 2.0f - 1.0f);  // in tangent space
 
     // get diffuse color
-    vec3 color = texture(diffuseMap, newTexCoords).rgb;
+    vec3 color = texture(diffuseMap, texCoords).rgb;
 
     // ambient
     vec3 ambient = 0.1f * color;
@@ -50,7 +57,7 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
     float height = texture(depthMap, texCoords).r;
     // .z > 0
-//    vec2 p = -viewDir.xy * (height * height_scale);
-    vec2 p = -viewDir.xy / viewDir.z * (height * height_scale);
+//    vec2 p = -viewDir.xy * (height * heightScale);
+    vec2 p = -viewDir.xy / viewDir.z * (height * heightScale);
     return texCoords + p;
 }

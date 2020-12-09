@@ -87,7 +87,7 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader shader("5_1_parallax_mapping.vert", "5_1_parallax_mapping.frag");
+    Shader shader("5_2_steep_parallax_mapping.vert", "5_2_steep_parallax_mapping.frag");
 
     // load textures
     // -------------
